@@ -1,10 +1,12 @@
-import { Component } from "react";
-import { Card } from "../card";
+import React, { Component } from "react";
 import axios from "axios";
 import "./index.css";
+import { Header } from "../header";
+import { IState } from "../../types";
+import { Content } from "../content";
 
 export interface ICard {
-  id: 1;
+  id: number;
   name: string;
   status: string;
   species: string;
@@ -24,16 +26,15 @@ export interface ICard {
   created: string;
 }
 
-export class Layout extends Component<
-  NonNullable<unknown>,
-  { inputValue: string; cards: ICard[] | undefined }
-> {
+export class Layout extends Component<NonNullable<unknown>, IState> {
   constructor(props: NonNullable<unknown>) {
     super(props);
 
     this.state = {
       inputValue: "",
       cards: undefined,
+      error: false,
+      requestError: "",
     };
   }
 
@@ -54,62 +55,52 @@ export class Layout extends Component<
           .then((response) => {
             const data = response.data;
             localStorage.setItem("data", JSON.stringify(data.results));
-            this.setState({ cards: data });
-            console.log(data);
+            this.setState({ cards: data.results });
           })
           .catch((error) => {
             console.error("Error fetching data: ", error);
           });
       } else {
         const data = JSON.parse(localData);
-        console.log(data);
         this.setState({ cards: data });
       }
     }
   }
 
-  console = () => {
-    axios
-      .get(
-        `https://rickandmortyapi.com/api/character/?name=${this.state.inputValue.trim()}`,
-      )
-      .then((response) => {
-        const data = response.data;
-        localStorage.setItem("searchInputValue", this.state.inputValue);
-        localStorage.setItem("searchData", JSON.stringify(data.results));
-        this.setState({ cards: data.results });
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      });
+  setInputValue = (value: string) => {
+    this.setState({ inputValue: value });
   };
 
-  setSearchValue = (value: string) => {
-    const regex = /^[a-zA-Z\s]*$/;
-    if (regex.test(value)) {
-      this.setState({ inputValue: value });
-    }
+  setError = () => {
+    this.setState({ error: true });
+  };
+
+  setErrorMessage = (message: string) => {
+    this.setState({ requestError: message });
+  };
+
+  resetErrorAndSetData = (data: ICard[]) => {
+    this.setState({ cards: data, requestError: "" });
   };
 
   render() {
+    if (this.state.error) {
+      throw new Error("Error.");
+    }
     return (
       <>
-        <header>
-          <input
-            type="text"
-            value={this.state.inputValue}
-            onChange={(e) => this.setSearchValue(e.target.value)}
-            placeholder="Search"
-          />
-          <button onClick={this.console} type="button">
-            Search
-          </button>
-        </header>
+        <Header
+          inputValue={this.state.inputValue}
+          setInputValue={this.setInputValue}
+          setError={this.setError}
+          setErrorMessage={this.setErrorMessage}
+          resetErrorAndSetData={this.resetErrorAndSetData}
+        />
         <main className="content">
-          {this.state.cards &&
-            this.state.cards.map((card) => (
-              <Card key={card.id} card={card}></Card>
-            ))}
+          <Content
+            requestError={this.state.requestError}
+            cards={this.state.cards}
+          />
         </main>
       </>
     );

@@ -4,7 +4,6 @@ import { ICard } from "../layout";
 
 export class Card extends Component<{ card: ICard }> {
   render() {
-    console.log(this.props.card);
     return (
       <div className="card">
         <div className="card-info">
@@ -16,10 +15,6 @@ export class Card extends Component<{ card: ICard }> {
           <p>{this.props.card.status}</p>
         </div>
         <div className="card-info">
-          <p>type:</p>
-          <p>{this.props.card.type}</p>
-        </div>
-        <div className="card-info">
           <p>gender:</p>
           <p>{this.props.card.gender}</p>
         </div>
@@ -28,8 +23,13 @@ export class Card extends Component<{ card: ICard }> {
           <p>{this.props.card.location.name}</p>
         </div>
         <div className="card-info">
-          <img src={this.props.card.image} alt="" />
-          <a href={this.props.card.image}></a>
+          <a
+            href={this.props.card.image}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={this.props.card.image} alt="person image" />
+          </a>
         </div>
       </div>
     );

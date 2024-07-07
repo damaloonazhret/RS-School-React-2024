@@ -1,10 +1,10 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { Button } from "../common/Button";
-import { getAllCookieNames } from "helpers/Cookies/getAllCookieNames";
-import { resetCookies } from "helpers/Cookies/resetCookies";
-import { Title } from "../common/Title";
 import "./index.scss";
 import { Txt } from "../common/Txt";
+import { getAllCookieNames } from "../../helpers/Cookies/getAllCookieNames";
+import { resetCookies } from "../../helpers/Cookies/resetCookies";
+import { Title } from "../common/Title";
+import { Button } from "../common/Button";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
