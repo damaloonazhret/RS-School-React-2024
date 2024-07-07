@@ -3,8 +3,8 @@ import { Button } from "../common/Button";
 import { getAllCookieNames } from "helpers/Cookies/getAllCookieNames";
 import { resetCookies } from "helpers/Cookies/resetCookies";
 import { Title } from "../common/Title";
-import { Txt } from "../common/Txt";
 import "./index.scss";
+import { Txt } from "../common/Txt";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
