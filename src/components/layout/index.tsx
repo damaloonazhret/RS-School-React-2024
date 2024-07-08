@@ -2,29 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import "./index.css";
 import { Header } from "../header";
-import { IState } from "../../types";
+import { ICard, IState } from "../../types";
 import { Content } from "../content";
-
-export interface ICard {
-  id: number;
-  name: string;
-  status: string;
-  species: string;
-  type: string;
-  gender: string;
-  origin: {
-    name: string;
-    url: string;
-  };
-  location: {
-    name: string;
-    url: string;
-  };
-  image: string;
-  episode: Array<string>;
-  url: string;
-  created: string;
-}
 
 export class Layout extends Component<NonNullable<unknown>, IState> {
   constructor(props: NonNullable<unknown>) {
@@ -35,6 +14,7 @@ export class Layout extends Component<NonNullable<unknown>, IState> {
       cards: undefined,
       error: false,
       requestError: "",
+      isLoading: false,
     };
   }
 
@@ -50,12 +30,13 @@ export class Layout extends Component<NonNullable<unknown>, IState> {
       }
     } else {
       if (!localData) {
+        this.setState({ isLoading: true });
         axios
           .get("https://rickandmortyapi.com/api/character")
           .then((response) => {
             const data = response.data;
             localStorage.setItem("data", JSON.stringify(data.results));
-            this.setState({ cards: data.results });
+            this.setState({ cards: data.results, isLoading: false });
           })
           .catch((error) => {
             console.error("Error fetching data: ", error);
@@ -83,6 +64,10 @@ export class Layout extends Component<NonNullable<unknown>, IState> {
     this.setState({ cards: data, requestError: "" });
   };
 
+  setIsLoading = (isLoading: boolean) => {
+    this.setState({ isLoading });
+  };
+
   render() {
     if (this.state.error) {
       throw new Error("Error.");
@@ -95,11 +80,13 @@ export class Layout extends Component<NonNullable<unknown>, IState> {
           setError={this.setError}
           setErrorMessage={this.setErrorMessage}
           resetErrorAndSetData={this.resetErrorAndSetData}
+          setIsLoading={this.setIsLoading}
         />
         <main className="content">
           <Content
             requestError={this.state.requestError}
             cards={this.state.cards}
+            isLoading={this.state.isLoading}
           />
         </main>
       </>

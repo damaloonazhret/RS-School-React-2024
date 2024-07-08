@@ -8,6 +8,8 @@ export class Content extends Component<Omit<IState, "error" | "inputValue">> {
       <>
         {this.props.requestError ? (
           <span>{this.props.requestError}</span>
+        ) : this.props.isLoading ? (
+          <span>Loading...</span>
         ) : (
           this.props.cards &&
           this.props.cards.map((card) => (

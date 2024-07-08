@@ -1,7 +1,7 @@
 import React, { Component, FormEvent } from "react";
 import axios from "axios";
-import { ICard } from "../layout";
 import "./index.css";
+import { ICard } from "../../types";
 
 interface HeaderProps {
   inputValue: string;
@@ -9,6 +9,7 @@ interface HeaderProps {
   setError: () => void;
   setErrorMessage: (message: string) => void;
   resetErrorAndSetData: (data: ICard[]) => void;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 interface HeaderState {
@@ -31,6 +32,7 @@ export class Header extends Component<HeaderProps, HeaderState> {
   };
 
   requestData = () => {
+    this.props.setIsLoading(true);
     axios
       .get(
         `https://rickandmortyapi.com/api/character/?name=${this.props.inputValue.trim()}`,
@@ -40,10 +42,12 @@ export class Header extends Component<HeaderProps, HeaderState> {
         localStorage.setItem("searchInputValue", this.props.inputValue);
         localStorage.setItem("searchData", JSON.stringify(data.results));
         this.props.resetErrorAndSetData(data.results);
+        this.props.setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
         this.props.setErrorMessage(error.message);
+        this.props.setIsLoading(false);
       });
   };
 
